@@ -37,27 +37,64 @@ class Messenger(object):
         txt = "I'm sorry, I didn't quite understand... Can I help you? (e.g. `<@" + bot_uid + "> help`)"
         self.send_message(channel_id, txt)
 
-    def write_joke(self, channel_id):
-        question = "Why did the python cross the road?"
-        self.send_message(channel_id, question)
-        self.clients.send_user_typing_pause(channel_id)
-        answer = "To eat the chicken on the other side! :laughing:"
-        self.send_message(channel_id, answer)
-
-
     def write_error(self, channel_id, err_msg):
         txt = ":face_with_head_bandage: my maker didn't handle this error very well:\n>```{}```".format(err_msg)
         self.send_message(channel_id, txt)
 
-    def demo_attachment(self, channel_id):
-        txt = "Beep Beep Boop is a ridiculously simple hosting platform for your Slackbots."
+    ############
+    # This function generates the message sent to the Reviewer when the Developer creates a PR or changes it
+    #
+    # dm_id: the DM the bot is posting in - should be the Reviewer's DM id
+    # dev_user_id: this needs to be looked up in our static github -> slack map
+    # pr_title: the display title of the pull request 
+    # pr_url: the URL to the pull request
+    # pr_number: the #12345 number of the pull request
+    ############
+    def write_needs_review_msg(self, dm_id, dev_user_id, pr_title, pr_url, pr_number):
+        message = "New code review request from <@" + dev_user_id + ">"
+        description = " <@" + dev_user_id + "> has asked you to review their pull request: *" + pr_title + "* <" + pr_url + "|#" + pr_number + ">. Please take a look when you have time. \n\nWhen you're done reviewing the PR, please be sure to `Submit Review` and select one of `Comment`, `Approve`, or `Request Changes`."
+
         attachment = {
-            "pretext": "We bring bots to life. :sunglasses: :thumbsup:",
-            "title": "Host, deploy and share your bot in seconds.",
-            "title_link": "https://beepboophq.com/",
-            "text": txt,
-            "fallback": txt,
-            "image_url": "https://storage.googleapis.com/beepboophq/_assets/bot-1.22f6fb.png",
-            "color": "#7CD197",
+            "text": description,
+            "fallback": message,
+            "color": "#000000",
+            "attachment_type": "default",
+            "mrkdwn_in": ["text"]
         }
-        self.clients.web.chat.post_message(channel_id, txt, attachments=[attachment], as_user='true')
+        self.clients.web.chat.post_message(dm_id, message, attachments=[attachment], as_user='true')
+
+    ############
+    # This function generates the message sent to the Developer after the Reviewer has submitted a review
+    #
+    # dm_id: the DM the bot is posting in - should be the Developer's DM id
+    # reviewer_user_id: this needs to be looked up in our static github -> slack map
+    # status: one of 'Approved', 'Request Changes', or 'Comment'
+    # pr_title: the display title of the pull request 
+    # pr_url: the URL to the pull request
+    # pr_number: the #12345 number of the pull request
+    ############
+    def write_needs_changes_msg(self, dm_id, reviewer_user_id, status, pr_title, pr_url, pr_number):
+        message = "New review from <@" + reviewer_user_id + ">: " + status
+        description = "<@" + reviewer_user_id + "> has reviewed your pull request: *" + pr_title + "* <" + pr_url + "|#" + pr_number + ">\n\nPlease address their comments and let them know when you've updated the PR."
+        ready_for_review_button = {
+            "name": "updated",
+            "type": "button",
+            "text": "Updated PR",
+            "style": "primary",
+            "value": "updated"
+        }
+
+        attachment = {
+            "text": description,
+            "fallback": message,
+            "color": "#000000",
+            "attachment_type": "default",
+            "mrkdwn_in": ["text"]
+        }
+
+        if status != "Approved":
+            attachment["actions"] = [ready_for_review_button]
+
+        self.clients.web.chat.post_message(dm_id, message, attachments=[attachment], as_user='true')
+
+

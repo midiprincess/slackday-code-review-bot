@@ -44,12 +44,15 @@ class RtmEventHandler(object):
                     self.msg_writer.write_help_message(event['channel'])
                 elif re.search('hi|hey|hello|howdy', msg_txt):
                     self.msg_writer.write_greeting(event['channel'], event['user'])
-                elif 'joke' in msg_txt:
-                    self.msg_writer.write_joke(event['channel'])
-                elif 'attachment' in msg_txt:
-                    self.msg_writer.demo_attachment(event['channel'])
-                elif 'echo' in msg_txt:
-                    self.msg_writer.send_message(event['channel'], msg_txt)
+                # sample message demonstrating the 'needs review' message 
+                elif 'review' in msg_txt:
+                    self.msg_writer.write_needs_review_msg(event['channel'], "U038A6XGV", "Initial Commit", "https://github.com/midiprincess/slackday-code-review-bot", "1234")
+                # sample message demonstrating the 'approved' message
+                elif 'approved' in msg_txt:
+                    self.msg_writer.write_needs_changes_msg(event['channel'], "U038A6XGV", "Approved", "Initial Commit", "https://github.com/midiprincess/slackday-code-review-bot", "1234")
+                # sample message demonstrating the 'Request Changes' message
+                elif 'changes' in msg_txt:
+                    self.msg_writer.write_needs_changes_msg(event['channel'], "U038A6XGV", "Needs Changes", "Initial Commit", "https://github.com/midiprincess/slackday-code-review-bot", "1234")
                 else:
                     self.msg_writer.write_prompt(event['channel'])
 
