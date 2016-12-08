@@ -81,7 +81,7 @@ class Messenger(object):
             "type": "button",
             "text": "Updated PR",
             "style": "primary",
-            "value": "updated"
+            "value": "updated",
         }
 
         attachment = {
@@ -89,7 +89,8 @@ class Messenger(object):
             "fallback": message,
             "color": "#000000",
             "attachment_type": "default",
-            "mrkdwn_in": ["text"]
+            "mrkdwn_in": ["text"],
+            "callback_id": "ready_for_review"
         }
 
         if status != "Approved":
@@ -97,4 +98,8 @@ class Messenger(object):
 
         self.clients.web.chat.post_message(dm_id, message, attachments=[attachment], as_user='true')
 
+    def write_updated_confirm_msg(self, dm_id):
+        message = ":white_check_mark: We've let them know that your PR is ready for another look!"
+        self.clients.web.chat.post_message(dm_id, message, as_user='true')
 
+    
