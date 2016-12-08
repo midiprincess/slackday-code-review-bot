@@ -55,7 +55,7 @@ if __name__ == "__main__":
     if slack_token == "":
         logging.info("SLACK_TOKEN env var not set, expecting token to be provided by Resourcer events")
 
-    app.run(debug=True, port=os.getenv('PORT', 5000))
+    app.run(debug=True, port=int(os.getenv('PORT', 5000)))
 
     # if slack_token == "":
     #     logging.info("SLACK_TOKEN env var not set, expecting token to be provided by Resourcer events")
