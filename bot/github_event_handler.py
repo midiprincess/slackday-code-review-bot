@@ -47,7 +47,7 @@ class GitHubEventHandler(object):
         attachment_text = message['attachments'][0]['text']
         title_start = attachment_text.find("*") + 1
         title_end = attachment_text.find("*", title_start)
-        pr_title = attachment_text[title_start:title_end]
+        pr_title = attachment_text[title_start:title_end].replace("+", " ")
 
         url_start = attachment_text.find("<") + 1
         url_end = attachment_text.find("|")
