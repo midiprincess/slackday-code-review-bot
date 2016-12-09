@@ -46,13 +46,25 @@ class GitHubEventHandler(object):
         self.msg_writer.write_review_submitted_msg(dm_id, slack_reviewer_id, pr_state, pr_title, pr_url, pr_number)
 
     def handleCommentsAddressedEvent(self, message):
-        # TODO extract below values from message. it needs to be un-escaped
-        text = message['attachments'][0]['text']
+        # extract below values from message. it needs to be un-escaped
+        # format is *{}* <{}|#{}>
+        attachment_text = message['attachments'][0]['text']
+        title_start = attachment_text.find("*") + 1
+        title_end = attachment_text.find("*", title_start)
+        pr_title = attachment_text[title_start:title_end]
 
-        pr_title = "PR"
-        pr_url = "http://myurl"
-        pr_number = 1234
-        slack_reviewer_id = "U3BTPETJ4"
+        url_start = attachment_text.find("<") + 1
+        url_end = attachment_text.find("|")
+        pr_url = attachment_text[url_start:url_end]
+
+        number_start = attachment_text.find("#") + 1
+        number_end = attachment_text.find(">")
+        pr_number = attachment_text[number_start:number_end]
+
+        message_text = message['text']
+        id_start = message_text.find("@") + 1
+        id_end = message_text.find(">")
+        slack_reviewer_id = message_text[id_start:id_end]
 
         im_response = self.slack.im.open(slack_reviewer_id)
         dm_id = im_response.body['channel']['id']

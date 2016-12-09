@@ -84,7 +84,7 @@ def comments_addressed():
     logging.debug(payload)
 
     if payload['callback_id'] == 'comments_addressed':
-        if payload['actions']['value'] == updated:
+        if payload['actions'][0]['value'] == 'updated':
             github_event_handler.handleCommentsAddressedEvent(payload['original_message'])
     
     message = {
