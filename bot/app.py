@@ -35,7 +35,7 @@ def pull_request():
     logging.debug('action: ' + pr_action)
     assignee = request.json['pull_request']['assignee']['login']
     logging.debug('sending DM to: ' + assignee)
-    if pr_action in ['assigned', 'unassigned', 'closed']:
+    if pr_action == 'assigned':
         logging.debug('PR was ' + pr_action)
         github_event_handler.handleNeedsReviewEvent(request.json['pull_request'])
     else:
@@ -53,11 +53,11 @@ def pr_review():
     pr_action = request.json['action']
     logging.debug('action: ' + pr_action)
     if pr_action == 'submitted':
-        logging.debug('PR request was submitted with state: ' + request.json['review']['state'])
+        state = request.json['review']['state']
+        logging.debug('PR request was submitted with state: ' + state)
         pr_number = request.json['pull_request']['number']
         logging.debug('PR # ' + str(pr_number))
-        # TODO
-        # call messenger
+        github_event_handler.handleReviewSubmittedEvent(state, request.json['pull_request'])
     else:
         logging.debug('action not actionable')
 

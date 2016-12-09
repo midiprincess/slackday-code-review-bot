@@ -21,7 +21,7 @@ class Messenger(object):
     ############
     def write_needs_review_msg(self, dm_id, dev_user_id, pr_title, pr_url, pr_number):
         message = "New code review request from <@" + dev_user_id + ">"
-        description = " <@" + dev_user_id + "> has asked you to review their pull request: *" + pr_title + "* <" + pr_url + "|#" + pr_number + ">. Please take a look when you have time. \n\nWhen you're done reviewing the PR, please be sure to `Submit Review` and select one of `Comment`, `Approve`, or `Request Changes`."
+        description = "<@" + dev_user_id + "> has asked you to review their pull request: *" + pr_title + "* <" + pr_url + "|#" + str(pr_number) + ">. Please take a look when you have time.\n\nWhen you're done reviewing the PR, please be sure to `Submit Review` and select one of `Comment`, `Approve`, or `Request Changes`."
 
         attachment = {
             "text": description,
@@ -42,9 +42,9 @@ class Messenger(object):
     # pr_url: the URL to the pull request
     # pr_number: the #12345 number of the pull request
     ############
-    def write_needs_changes_msg(self, dm_id, reviewer_user_id, status, pr_title, pr_url, pr_number):
+    def write_review_submitted_msg(self, dm_id, reviewer_user_id, status, pr_title, pr_url, pr_number):
         message = "New review from <@" + reviewer_user_id + ">: " + status
-        description = "<@" + reviewer_user_id + "> has reviewed your pull request: *" + pr_title + "* <" + pr_url + "|#" + pr_number + ">\n\nPlease address their comments and let them know when you've updated the PR."
+        description = "<@" + reviewer_user_id + "> has reviewed your pull request: *" + pr_title + "* <" + pr_url + "|#" + str(pr_number) + ">\n\nPlease address their comments and let them know when you've updated the PR."
         ready_for_review_button = {
             "name": "updated",
             "type": "button",

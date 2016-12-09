@@ -10,6 +10,8 @@ class GitHubEventHandler(object):
         pr_author = pull_request['user']['login']
         pr_assignee = pull_request['assignee']['login']
 
+        # slack_author_id = getSlackIdFromGithubUsername(pr_author)
+        # slack_reviewer_id = getSlackIdFromGithubUsername(pr_assignee)
         slack_author_id = 'U038A6XGV'
         slack_reviewer_id = 'U0HMHRNLT'
 
@@ -21,3 +23,27 @@ class GitHubEventHandler(object):
         pr_number = pull_request['number']
 
         self.msg_writer.write_needs_review_msg(dm_id, slack_author_id, pr_title, pr_url, pr_number)
+
+    def handleReviewSubmittedEvent(self, pr_state, pull_request):
+        # TODO: map these to slack users
+        pr_author = pull_request['user']['login']
+        pr_assignee = pull_request['assignee']['login']
+
+        # slack_author_id = getSlackIdFromGithubUsername(pr_author)
+        # slack_reviewer_id = getSlackIdFromGithubUsername(pr_assignee)
+        slack_author_id = 'U038A6XGV'
+        slack_reviewer_id = 'U0HMHRNLT'
+
+        im_response = self.slack.im.open(slack_reviewer_id)
+        dm_id = im_response.body['channel']['id']
+
+        pr_title = pull_request['title']
+        pr_url = pull_request['html_url']
+        pr_number = pull_request['number']
+
+        self.msg_writer.write_review_submitted_msg(dm_id, slack_reviewer_id, pr_state, pr_title, pr_url, pr_number)
+
+    def getSlackIdFromGithubUsername(github_username):
+        with open('resources/github.json') as data_file:    
+            data = json.load(data_file)
+            return data[github_username]
