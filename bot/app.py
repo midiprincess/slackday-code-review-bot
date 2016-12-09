@@ -64,6 +64,18 @@ def pr_review():
     return jsonify('ok'), 200
 
 
+@app.route('/crbot/api/v1.0/comments_addressed', methods=['POST'])
+def pr_review():
+    # if not request.json or not 'review' in request.json:
+    #     logging.error('recieved bad request')
+    #     logging.debug(request)
+    #     abort(400)
+    logging.debug('Received comments addressed')
+
+
+    return jsonify('ok'), 200
+
+
 if __name__ == "__main__":
 
     global msg_writer
