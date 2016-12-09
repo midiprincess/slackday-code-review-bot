@@ -35,7 +35,7 @@ def pull_request():
     logging.debug('action: ' + pr_action)
     assignee = request.json['pull_request']['assignee']['login']
     logging.debug('sending DM to: ' + assignee)
-    if pr_action in ['assigned', 'unassigned', 'closed']:
+    if pr_action == 'assigned':
         logging.debug('PR was ' + pr_action)
         github_event_handler.handleNeedsReviewEvent(request.json['pull_request'])
     else:

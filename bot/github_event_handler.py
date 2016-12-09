@@ -10,8 +10,10 @@ class GitHubEventHandler(object):
         pr_author = pull_request['user']['login']
         pr_assignee = pull_request['assignee']['login']
 
-        slack_author_id = getSlackIdFromGithubUsername(pr_author)
-        slack_reviewer_id = getSlackIdFromGithubUsername(pr_assignee)
+        # slack_author_id = getSlackIdFromGithubUsername(pr_author)
+        # slack_reviewer_id = getSlackIdFromGithubUsername(pr_assignee)
+        slack_author_id = 'U038A6XGV'
+        slack_reviewer_id = 'U0HMHRNLT'
 
         im_response = self.slack.im.open(slack_reviewer_id)
         dm_id = im_response.body['channel']['id']
@@ -27,8 +29,10 @@ class GitHubEventHandler(object):
         pr_author = pull_request['user']['login']
         pr_assignee = pull_request['assignee']['login']
 
-        slack_author_id = getSlackIdFromGithubUsername(pr_author)
-        slack_reviewer_id = getSlackIdFromGithubUsername(pr_assignee)
+        # slack_author_id = getSlackIdFromGithubUsername(pr_author)
+        # slack_reviewer_id = getSlackIdFromGithubUsername(pr_assignee)
+        slack_author_id = 'U038A6XGV'
+        slack_reviewer_id = 'U0HMHRNLT'
 
         im_response = self.slack.im.open(slack_reviewer_id)
         dm_id = im_response.body['channel']['id']
