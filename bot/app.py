@@ -9,16 +9,15 @@ from beepboop import bot_manager
 from slack_bot import SlackBot
 from slack_bot import spawn_bot
 
-from slack_clients import SlackClients
+from slacker import Slacker
 from messenger import Messenger
+from github_event_handler import GitHubEventHandler
 
 from flask import Flask, request, jsonify, abort
 
 logger = logging.getLogger(__name__)
 
 slack_token = os.getenv("SLACK_TOKEN", "")
-slack_client = SlackClients(slack_token)
-messenger = Messenger(slack_client)
 
 app = Flask(__name__)
 
@@ -38,8 +37,7 @@ def pull_request():
     logging.debug('sending DM to: ' + assignee)
     if pr_action in ['assigned', 'unassigned', 'closed']:
         logging.debug('PR was ' + pr_action)
-        # TODO: pass real params here
-        messenger.write_needs_review_msg('D12355', 'U1223543', 'PR Title', 'http://prurl', 'pr number')
+        github_event_handler.handleNeedsReviewEvent(request.json['pull_request'])
     else:
         logging.debug('action not actionable')
 
@@ -68,6 +66,11 @@ def pr_review():
 
 if __name__ == "__main__":
 
+    global msg_writer
+    global event_handler
+    global github_event_handler
+    global slack
+
     log_level = os.getenv("LOG_LEVEL", "INFO")
     logging.basicConfig(format='%(asctime)s - %(levelname)s: %(message)s', level=log_level)
 
@@ -75,18 +78,12 @@ if __name__ == "__main__":
     if slack_token == "":
         logging.info("SLACK_TOKEN env var not set, expecting token to be provided by Resourcer events")
 
+    slack = Slacker(slack_token)
+    msg_writer = Messenger(slack)
+    github_event_handler = GitHubEventHandler(slack, msg_writer)
+
+    
     port = os.getenv('PORT', 5000)
     logging.info('PORT=' + str(port))
 
     app.run(debug=True, port=int(port))
-
-    # if slack_token == "":
-    #     logging.info("SLACK_TOKEN env var not set, expecting token to be provided by Resourcer events")
-    #     slack_token = None
-    #     botManager = bot_manager.BotManager(spawn_bot)
-    #     res = resourcer.Resourcer(botManager)
-    #     res.start()
-    # else:
-    #     # only want to run a single instance of the bot in dev mode
-    #     bot = SlackBot(slack_token)
-    #     bot.start({})
