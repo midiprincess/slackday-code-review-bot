@@ -9,7 +9,7 @@ from beepboop import bot_manager
 from slack_bot import SlackBot
 from slack_bot import spawn_bot
 
-from slack_clients import SlackClients
+from slacker import Slacker
 from messenger import Messenger
 from github_event_handler import GitHubEventHandler
 
@@ -18,9 +18,6 @@ from flask import Flask, request, jsonify, abort
 logger = logging.getLogger(__name__)
 
 slack_token = os.getenv("SLACK_TOKEN", "")
-slack_client = SlackClients(slack_token)
-messenger = Messenger(slack_client)
-github_event_handler = GitHubEventHandler(slack_client, messenger)
 
 app = Flask(__name__)
 
@@ -49,12 +46,21 @@ def pull_request():
 
 if __name__ == "__main__":
 
+    global msg_writer
+    global event_handler
+    global github_event_handler
+    global slack
+
     log_level = os.getenv("LOG_LEVEL", "INFO")
     logging.basicConfig(format='%(asctime)s - %(levelname)s: %(message)s', level=log_level)
 
     logging.info("token: {}".format(slack_token))
     if slack_token == "":
         logging.info("SLACK_TOKEN env var not set, expecting token to be provided by Resourcer events")
+
+    slack = Slacker(slack_token)
+    msg_writer = Messenger(slack)
+    github_event_handler = GitHubEventHandler(slack, msg_writer)
 
     app.run(debug=True, port=int(os.getenv('PORT', 5000)))
 
