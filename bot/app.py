@@ -85,7 +85,7 @@ def comments_addressed():
 
     if payload['callback_id'] == 'comments_addressed':
         if payload['actions'][0]['value'] == 'updated':
-            github_event_handler.handleCommentsAddressedEvent(payload['original_message'])
+            github_event_handler.handleCommentsAddressedEvent(payload['user']['id'], payload['original_message'])
     
     message = {
         "response_type": "ephemeral",

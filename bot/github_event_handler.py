@@ -1,6 +1,4 @@
 import json
-import logging
-import urllib
 
 class GitHubEventHandler(object):
     def __init__(self, slack, msg_writer):
@@ -33,8 +31,6 @@ class GitHubEventHandler(object):
 
         slack_author_id = self.getSlackIdFromGithubUsername(pr_author)
         slack_reviewer_id = self.getSlackIdFromGithubUsername(pr_assignee)
-        # slack_author_id = 'U038A6XGV'
-        # slack_reviewer_id = 'U0HMHRNLT'
 
         im_response = self.slack.im.open(slack_author_id)
         dm_id = im_response.body['channel']['id']
@@ -45,7 +41,7 @@ class GitHubEventHandler(object):
 
         self.msg_writer.write_review_submitted_msg(dm_id, slack_reviewer_id, pr_state, pr_title, pr_url, pr_number)
 
-    def handleCommentsAddressedEvent(self, message):
+    def handleCommentsAddressedEvent(self, slack_reviewer_id, message):
         # extract below values from message. it needs to be un-escaped
         # format is *{}* <{}|#{}>
         attachment_text = message['attachments'][0]['text']
@@ -64,9 +60,9 @@ class GitHubEventHandler(object):
         message_text = message['text']
         id_start = message_text.find("@") + 1
         id_end = message_text.find(">")
-        slack_reviewer_id = message_text[id_start:id_end]
+        slack_author_id = message_text[id_start:id_end]
 
-        im_response = self.slack.im.open(slack_reviewer_id)
+        im_response = self.slack.im.open(slack_author_id)
         dm_id = im_response.body['channel']['id']
 
         self.msg_writer.write_needs_review_msg(dm_id, slack_reviewer_id, pr_title, pr_url, pr_number)
