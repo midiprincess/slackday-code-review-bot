@@ -28,9 +28,9 @@ def not_found(error):
 @app.route('/crbot/api/v1.0/pr', methods=['POST'])
 def pull_request():
     if not request.json or not 'pull_request' in request.json:
-        logging.error('recieved bad request')
+        logging.error('received bad request')
         abort(400)
-    logging.debug('Received POST')
+    logging.debug('received POST')
     pr_action = request.json['action']
     logging.debug('action: ' + pr_action)
     assignee = request.json['pull_request']['assignee']['login']
@@ -46,10 +46,10 @@ def pull_request():
 @app.route('/crbot/api/v1.0/pr_review', methods=['POST'])
 def pr_review():
     if not request.json or not 'review' in request.json:
-        logging.error('recieved bad request')
+        logging.error('received bad request')
         logging.debug(request)
         abort(400)
-    logging.debug('Received POST')
+    logging.debug('received POST')
     pr_action = request.json['action']
     logging.debug('action: ' + pr_action)
     if pr_action == 'submitted':
@@ -66,14 +66,15 @@ def pr_review():
 
 @app.route('/crbot/api/v1.0/comments_addressed', methods=['POST'])
 def comments_addressed():
-    if not request.json or not 'callback_id' in request.json:
-        logging.error('recieved bad request')
-        logging.debug(request)
-        abort(400)
-    logging.debug('Received comments addressed')
+    # if not request.json or not 'callback_id' in request.json:
+    #     logging.error('received bad request')
+    #     logging.debug(request)
+    #     abort(400)
+    logging.debug('received comments addressed')
+    logging.debug(dir(request))
 
-    if request.json['callback_id'] == 'ready_for_review':
-        github_event_handler.handleCommentsAddressedEvent(request.json['user']['id'], request.json['channel']['id'], request.json['original_message'])
+    # if request.json['callback_id'] == 'ready_for_review':
+    #     github_event_handler.handleCommentsAddressedEvent(request.data['user']['id'], request.json['channel']['id'], request.json['original_message'])
 
     return jsonify('ok'), 200
 
