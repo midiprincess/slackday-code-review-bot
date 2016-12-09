@@ -11,6 +11,7 @@ from slack_bot import spawn_bot
 
 from slack_clients import SlackClients
 from messenger import Messenger
+from github_event_handler import GitHubEventHandler
 
 from flask import Flask, request, jsonify, abort
 
@@ -19,6 +20,7 @@ logger = logging.getLogger(__name__)
 slack_token = os.getenv("SLACK_TOKEN", "")
 slack_client = SlackClients(slack_token)
 messenger = Messenger(slack_client)
+github_event_handler = GitHubEventHandler(slack_client, messenger)
 
 app = Flask(__name__)
 
@@ -38,8 +40,7 @@ def pull_request():
     logging.debug('sending DM to: ' + assignee)
     if pr_action in ['assigned', 'unassigned', 'closed']:
         logging.debug('PR was ' + pr_action)
-        # TODO: pass real params here
-        messenger.write_needs_review_msg('D12355', 'U1223543', 'PR Title', 'http://prurl', 'pr number')
+        github_event_handler.handleNeedsReviewEvent(request.json['pull_request'])
     else:
         logging.debug('action not actionable')
 
