@@ -21,7 +21,7 @@ class Messenger(object):
     ############
     def write_needs_review_msg(self, dm_id, dev_user_id, pr_title, pr_url, pr_number):
         message = "New code review request from <@" + dev_user_id + ">"
-        description = "<@" + dev_user_id + "> has asked you to review their pull request: *" + pr_title + "* <" + pr_url + "|#" + str(pr_number) + ">. Please take a look when you have time.\n\nWhen you're done reviewing the PR, please be sure to `Submit Review` and select one of `Comment`, `Approve`, or `Request Changes`."
+        description = "You've been given the honor of reviewing: *" + pr_title + "* <" + pr_url + "|#" + str(pr_number) + ">. \n\nPlease take a look when you have time. \n\nWhen you're done reviewing the PR, please be sure to `Submit Review` and select one of `Comment`, `Approve`, or `Request Changes`."
 
         attachment = {
             "text": description,
