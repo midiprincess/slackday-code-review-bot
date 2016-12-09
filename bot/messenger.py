@@ -43,12 +43,25 @@ class Messenger(object):
     # pr_number: the #12345 number of the pull request
     ############
     def write_review_submitted_msg(self, dm_id, reviewer_user_id, status, pr_title, pr_url, pr_number):
-        message = "New review from <@" + reviewer_user_id + ">: " + status
-        description = "<@" + reviewer_user_id + "> has reviewed your pull request: *" + pr_title + "* <" + pr_url + "|#" + str(pr_number) + ">\n\nPlease address their comments and let them know when you've updated the PR."
+        description = "*{}* <{}|#{}>".format(pr_title, pr_url, pr_number) #TODO: add summary
+        if status == 'approved':
+            message = "<@{}> has approved your PR! :tada:".format(reviewer_user_id)
+        elif status == 'changes_requested':
+            message = "<@{}> has requested changes on your PR.".format(reviewer_user_id)
+            description += "\n\nPlease address their comments and let them know when you've done."
+     
+        merge_button = {
+            "name": "merge",
+            "type": "button",
+            "text": "Merge",
+            "style": "primary",
+            "value": "merge",
+        }
+
         ready_for_review_button = {
             "name": "updated",
             "type": "button",
-            "text": "Updated PR",
+            "text": "Updated",
             "style": "primary",
             "value": "updated",
         }
@@ -59,11 +72,14 @@ class Messenger(object):
             "color": "#000000",
             "attachment_type": "default",
             "mrkdwn_in": ["text"],
-            "callback_id": "ready_for_review"
         }
 
         if status != "approved":
             attachment["actions"] = [ready_for_review_button]
+            attachment["callback_id"] = "updated"
+        else:
+            attachment["actions"] = [merge_button]
+            attachment["callback_id"] = "merge"
 
         self.slack.chat.post_message(dm_id, message, attachments=[attachment], as_user='true')
 

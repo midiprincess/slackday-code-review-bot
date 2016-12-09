@@ -33,8 +33,11 @@ def pull_request():
     logging.debug('received POST')
     pr_action = request.json['action']
     logging.debug('action: ' + pr_action)
-    assignee = request.json['pull_request']['assignee']['login']
-    logging.debug('sending DM to: ' + assignee)
+    assignee = request.json['pull_request']['assignee']
+    if not assignee:
+        return jsonify('ok: no assignee'), 200
+    user_name = assignee['login']
+    logging.debug('sending DM to: ' + user_name)
     if pr_action == 'assigned':
         logging.debug('PR was ' + pr_action)
         github_event_handler.handleNeedsReviewEvent(request.json['pull_request'])
