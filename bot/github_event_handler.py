@@ -43,6 +43,15 @@ class GitHubEventHandler(object):
 
         self.msg_writer.write_review_submitted_msg(dm_id, slack_reviewer_id, pr_state, pr_title, pr_url, pr_number)
 
+    def handleCommentsAddressedEvent(self, slack_author_id, dm_id, message):
+        # TODO extract below values from message. it needs to be un-escaped
+        pr_title =
+        pr_url =
+        pr_number =
+
+        self.msg_writer.write_needs_review_msg(dm_id, slack_author_id, pr_title, pr_url, pr_number)
+
+
     def getSlackIdFromGithubUsername(github_username):
         with open('resources/github.json') as data_file:    
             data = json.load(data_file)

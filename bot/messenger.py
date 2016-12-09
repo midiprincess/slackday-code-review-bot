@@ -62,7 +62,7 @@ class Messenger(object):
             "callback_id": "ready_for_review"
         }
 
-        if status != "Approved":
+        if status != "approved":
             attachment["actions"] = [ready_for_review_button]
 
         self.slack.chat.post_message(dm_id, message, attachments=[attachment], as_user='true')

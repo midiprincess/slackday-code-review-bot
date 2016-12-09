@@ -65,13 +65,15 @@ def pr_review():
 
 
 @app.route('/crbot/api/v1.0/comments_addressed', methods=['POST'])
-def pr_review():
-    # if not request.json or not 'review' in request.json:
-    #     logging.error('recieved bad request')
-    #     logging.debug(request)
-    #     abort(400)
+def comments_addressed():
+    if not request.json or not 'callback_id' in request.json:
+        logging.error('recieved bad request')
+        logging.debug(request)
+        abort(400)
     logging.debug('Received comments addressed')
 
+    if request.json['callback_id'] == 'ready_for_review':
+        github_event_handler.handleCommentsAddressedEvent(request.json['user']['id'], request.json['channel']['id'], request.json['original_message'])
 
     return jsonify('ok'), 200
 
