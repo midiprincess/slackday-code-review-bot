@@ -75,11 +75,19 @@ def comments_addressed():
     #     abort(400)
     logging.debug('received comments addressed')
     logging.debug(dir(request))
+    logging.debug(request.data)
+    logging.debug(request.json)
+    logging.debug(request.get_data())
+    logging.debug(request.get_json())
 
     # if request.json['callback_id'] == 'ready_for_review':
     #     github_event_handler.handleCommentsAddressedEvent(request.data['user']['id'], request.json['channel']['id'], request.json['original_message'])
-
-    return jsonify('ok'), 200
+    message = {
+        "response_type": "ephemeral",
+        "replace_original": false,
+        "text": ":white_check_mark: We've let them know that your PR is ready for another look!"
+    }
+    return jsonify(message), 200
 
 
 if __name__ == "__main__":

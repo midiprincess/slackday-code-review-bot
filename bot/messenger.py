@@ -83,8 +83,5 @@ class Messenger(object):
 
         self.slack.chat.post_message(dm_id, message, attachments=[attachment], as_user='true')
 
-    def write_updated_confirm_msg(self, dm_id):
-        message = ":white_check_mark: We've let them know that your PR is ready for another look!"
-        self.slack.chat.post_message(dm_id, message, as_user='true')
 
     
