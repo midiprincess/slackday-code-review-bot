@@ -7,8 +7,5 @@ config:
     friendly_name: Severity level to show for logging.
     info: See https://docs.python.org/2/library/logging.html#levels
     default: DEBUG
-  - name: PORT
-    friendly_name: Port for Flask to listen on
-    default: 5000
 screenshots:
   - screenshot: resources/screenshot1.png
