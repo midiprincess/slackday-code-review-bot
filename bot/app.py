@@ -45,6 +45,26 @@ def pull_request():
 
     return jsonify('ok'), 200
 
+@app.route('/crbot/api/v1.0/pr_review', methods=['POST'])
+def pr_review():
+    if not request.json or not 'review' in request.json:
+        logging.error('recieved bad request')
+        logging.debug(request)
+        abort(400)
+    logging.debug('Received POST')
+    pr_action = request.json['action']
+    logging.debug('action: ' + pr_action)
+    if pr_action == 'submitted':
+        logging.debug('PR request was submitted with state: ' + request.json['review']['state'])
+        pr_number = request.json['pull_request']['number']
+        logging.debug('PR # ' + str(pr_number))
+        # TODO
+        # call messenger
+    else:
+        logging.debug('action not actionable')
+
+    return jsonify('ok'), 200
+
 
 if __name__ == "__main__":
 
@@ -56,8 +76,8 @@ if __name__ == "__main__":
         logging.info("SLACK_TOKEN env var not set, expecting token to be provided by Resourcer events")
 
     port = os.getenv('PORT', 5000)
-    logging.info('PORT=' + port)
-    
+    logging.info('PORT=' + str(port))
+
     app.run(debug=True, port=int(port))
 
     # if slack_token == "":
