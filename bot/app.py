@@ -86,12 +86,16 @@ def comments_addressed():
     if payload['callback_id'] == 'comments_addressed':
         if payload['actions'][0]['value'] == 'updated':
             github_event_handler.handleCommentsAddressedEvent(payload['user']['id'], payload['original_message'])
+            message_text = ":white_check_mark: We've let them know that your PR is ready for another look!"
+        elif payload['actions'][0]['value'] == 'merge':
+            message_text = ":tada: Congrats! We've merged your PR."
     
     message = {
         "response_type": "ephemeral",
         "replace_original": "false",
-        "text": ":white_check_mark: We've let them know that your PR is ready for another look!"
+        "text": message_text
     }
+    
     return jsonify(message), 200
 
 
