@@ -2,6 +2,8 @@
 
 import logging
 import os
+import urllib
+import json
 
 from beepboop import resourcer
 from beepboop import bot_manager
@@ -71,20 +73,23 @@ def pr_review():
 def comments_addressed():
     # if not request.json or not 'callback_id' in request.json:
     #     logging.error('received bad request')
-    #     logging.debug(request)
-    #     abort(400)
+    # logging.debug(request.json['callback_id'])
+        # abort(400)
     logging.debug('received comments addressed')
-    logging.debug(dir(request))
-    logging.debug(request.data)
-    logging.debug(request.json)
-    logging.debug(request.get_data())
-    logging.debug(request.get_json())
+    
+    request.get_data()
+    data = request.data
+    unquoted_data = urllib.unquote(data)[8:]
+    payload = json.loads(unquoted_data)
+    logging.debug(payload)
 
-    # if request.json['callback_id'] == 'ready_for_review':
-    #     github_event_handler.handleCommentsAddressedEvent(request.data['user']['id'], request.json['channel']['id'], request.json['original_message'])
+    if payload['callback_id'] == 'comments_addressed':
+        if payload['actions']['value'] == updated:
+            github_event_handler.handleCommentsAddressedEvent(payload['original_message'])
+    
     message = {
         "response_type": "ephemeral",
-        "replace_original": false,
+        "replace_original": "false",
         "text": ":white_check_mark: We've let them know that your PR is ready for another look!"
     }
     return jsonify(message), 200
